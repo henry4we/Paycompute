@@ -1,4 +1,5 @@
 ﻿using Paycompute.Entity;
+using Paycompute.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,14 +9,26 @@ namespace Paycompute.Services.Implement
 {
     class EmployeeService : IEmployeeService
     {
-        public Task CreateAsync(Employee newEmployee)
+        private readonly ApplicationDbContext _context;
+        public EmployeeService( ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        
+        public async Task CreateAsync(Employee newEmployee)
+        {
+            await _context.Employees.AddAsync(newEmployee);
+            await _context.SaveChangesAsync();
+
         }
 
-        public Task Delete(int employeeId)
+        public async Task Delete(int employeeId)
         {
-            throw new NotImplementedException();
+            var employee = GetById(employeeId);
+            _context.Remove(employee);
+            await _context.SaveChangesAsync();
+
+         
         }
 
         public IEnumerable<Employee> GetAll()
